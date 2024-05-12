@@ -8,7 +8,9 @@
 import React, {useEffect, useRef, useState} from 'react';
 import type {PropsWithChildren} from 'react';
 import {
+  ActivityIndicator,
   BackHandler,
+  Dimensions,
   SafeAreaView,
   StatusBar,
   useColorScheme,
@@ -16,11 +18,13 @@ import {
 import {WebView} from 'react-native-webview';
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 
+const {width, height} = Dimensions.get('window');
+
 function App(): React.JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
   const webViewRef = useRef();
   const canGoBackRef = useRef(false);
-
+  const [activitiyIndicator, setActivitiyIndicator] = useState(true);
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
@@ -59,7 +63,15 @@ function App(): React.JSX.Element {
         onNavigationStateChange={navState => {
           canGoBackRef.current = navState.canGoBack;
         }}
+        onLoadStart={() => setActivitiyIndicator(true)}
+        onLoadEnd={() => setActivitiyIndicator(false)}
       />
+      {activitiyIndicator && (
+        <ActivityIndicator
+          style={{position: 'absolute', top: height / 2, left: width / 2}}
+          size="large"
+        />
+      )}
     </SafeAreaView>
   );
 }
